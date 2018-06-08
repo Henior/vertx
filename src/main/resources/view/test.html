@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script type="text/javascript" src="/static/js/jquery-3.3.1.js" ></script>
+</head>
+<body>
+<button name="链接" onclick="func();" style="border-radius: 5px;background: #ff9012;">链接</button>
+<form action="/upload" method="post" enctype="multipart/form-data">
+  <input type="file" name="txt"/>
+  hello :<input type="text" name="hel" value="${context.get('hello')!}"/>
+  <input type="submit" name="提交" />
+</form>
+
+<script>
+  function func() {
+    console.log(navigator);
+    if(/.*\(i(Pad|Phone);/.test(navigator.appVersion) || /.*\(i(Pad|Phone);/.test(navigator.userAgent)){
+      window.location.href = "https://itunes.apple.com/app/apple-store/id1329177066?pt=118811627&ct=qq_qun&mt=8";
+    }else {
+      window.location.href = "http://a.app.qq.com/o/simple.jsp?pkgname=com.ydwx.yoyo";
+    }
+  }
+  alert($("button").attr("name"));
+</script>
+</body>
+</html>
