@@ -101,7 +101,7 @@ public class RouteVerticle extends AutoRegisterVerticle {
     /*
     与jdbcProvider基本等价
     JsonObject config = new JsonObject().put("properties_path", "classpath:test-auth.properties");
-    AuthProvider provider = ShiroAuth.create(vertx, ShiroAuthRealmType.PROPERTIES, config);*/
+    AuthProvider provider = ShiroAuth.create(vertx, ShiroAuthRealmType.PROPERTIES, config); */
 
 
 
