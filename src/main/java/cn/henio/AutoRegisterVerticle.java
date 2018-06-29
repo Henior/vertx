@@ -1,4 +1,4 @@
-package cn.henio.bootstrap;
+package cn.henio;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.AsyncResult;
@@ -6,6 +6,8 @@ import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import javax.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -15,12 +17,16 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public abstract class AutoRegisterVerticle extends AbstractVerticle {
 
+  private final Logger logger = LoggerFactory.getLogger(AutoRegisterVerticle.class);
+
   @Autowired
   private Vertx vertx;
 
   @PostConstruct
   private void prepare() throws Exception {
-    vertx.deployVerticle(this, deploymentOptions().setInstances(1), completionHandler());
+    for (int i = 1; i <= deploymentOptions().getInstances(); i++) {
+      vertx.deployVerticle(this, deploymentOptions().setInstances(1), completionHandler());
+    }
   }
 
   /**
@@ -37,9 +43,10 @@ public abstract class AutoRegisterVerticle extends AbstractVerticle {
   protected Handler<AsyncResult<String>> completionHandler(){
     return result -> {
       if (result.succeeded()) {
-        System.out.println("[" + this.getClass().getTypeName() + "]-Deployment id is: " + result.result());
+        logger.info("[" + this.getClass().getTypeName() + "]-Deployment id is: " + result.result());
       } else {
-        System.out.println("[" + this.getClass().getTypeName() + "]-Deployment failed!");
+        result.cause().printStackTrace();
+        logger.warn("[" + this.getClass().getTypeName() + "]-Deployment failed!");
       }
     };
   }

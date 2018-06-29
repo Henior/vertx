@@ -1,16 +1,16 @@
 package cn.henio.core;
 
-import cn.henio.bootstrap.AutoRegisterVerticle;
+import cn.henio.AutoRegisterVerticle;
 import io.vertx.core.Vertx;
+import io.vertx.core.eventbus.DeliveryOptions;
 import io.vertx.ext.web.Router;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * @author: mouzhanpeng.
  * @date: created in [2018/5/7 14:39].
  */
-@Component
+//@Component
 public class EventBusVerticle extends AutoRegisterVerticle{
 
   @Autowired
@@ -20,7 +20,7 @@ public class EventBusVerticle extends AutoRegisterVerticle{
   public void start() throws Exception {
     Vertx vertx = getVertx();
     router.route("/publish").blockingHandler(context ->{
-      vertx.eventBus().send("bus.key", context.request().getParam("key"),res -> {
+      vertx.eventBus().send("bus.key", context.request().getParam("key"), new DeliveryOptions().addHeader("childKey","xxx"),res -> {
         if(res.succeeded()){
           System.out.println("reply:" + res.result().body().toString());
         }
