@@ -17,7 +17,6 @@ import io.vertx.ext.web.sstore.SessionStore;
 import io.vertx.ext.web.templ.FreeMarkerTemplateEngine;
 import io.vertx.redis.RedisClient;
 import io.vertx.redis.RedisOptions;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -28,22 +27,14 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class Configurations {
 
-  private final Vertx vertx = Vertx.vertx(new VertxOptions().setFileResolverCachingEnabled(false));
-
-  @Autowired
-  private SessionStore sessionStore;
-  @Autowired
-  private JDBCClient jdbcClient;
-  @Autowired
-  private JDBCAuth jdbcAuth;
-
   /**
    * 全局唯一Vertx
    * @return
    */
   @Bean
   public Vertx vertx(){
-    return vertx;
+    //return Vertx.vertx(new VertxOptions().setFileResolverCachingEnabled(false));
+    return Application.getVertx();
   }
 
   /**
@@ -51,7 +42,7 @@ public class Configurations {
    * @return
    */
   @Bean
-  public Router router(){
+  public Router router(Vertx vertx){
     return Router.router(vertx);
   }
 
@@ -61,17 +52,17 @@ public class Configurations {
   }
 
   @Bean
-  public SessionStore sessionStore(){
+  public SessionStore sessionStore(Vertx vertx){
     return LocalSessionStore.create(vertx);
   }
 
   @Bean
-  public SessionHandler sessionHandler(){
+  public SessionHandler sessionHandler(SessionStore sessionStore){
     return SessionHandler.create(sessionStore).setCookieHttpOnlyFlag(true);
   }
 
   @Bean
-  public UserSessionHandler userSessionHandler(){
+  public UserSessionHandler userSessionHandler(JDBCAuth jdbcAuth){
     return UserSessionHandler.create(jdbcAuth);
   }
 
@@ -91,7 +82,7 @@ public class Configurations {
   }
 
   @Bean
-  public JDBCClient jdbcClient(){
+  public JDBCClient jdbcClient(Vertx vertx){
     return JDBCClient.createShared(vertx, new JsonObject()
         .put("url", "jdbc:hsqldb:file:db/wiki")
         .put("driver_class", "org.hsqldb.jdbcDriver")
@@ -99,13 +90,13 @@ public class Configurations {
   }
 
   @Bean
-  public RedisClient redisClient(){
+  public RedisClient redisClient(Vertx vertx){
     return RedisClient.create(vertx, new RedisOptions()
         .setHost("192.168.20.30").setSelect(8));
   }
 
   @Bean
-  public JDBCAuth jdbcAuth(){
+  public JDBCAuth jdbcAuth(Vertx vertx, JDBCClient jdbcClient){
     return JDBCAuth.create(vertx, jdbcClient);
   }
 }

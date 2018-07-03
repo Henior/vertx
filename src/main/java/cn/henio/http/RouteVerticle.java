@@ -14,6 +14,9 @@ import io.vertx.ext.auth.User;
 import io.vertx.ext.auth.jdbc.JDBCAuth;
 import io.vertx.ext.auth.jwt.JWTAuth;
 import io.vertx.ext.auth.jwt.JWTOptions;
+import io.vertx.ext.auth.oauth2.OAuth2Auth;
+import io.vertx.ext.auth.oauth2.OAuth2ClientOptions;
+import io.vertx.ext.auth.oauth2.OAuth2FlowType;
 import io.vertx.ext.auth.shiro.ShiroAuth;
 import io.vertx.ext.auth.shiro.ShiroAuthRealmType;
 import io.vertx.ext.jdbc.JDBCClient;
@@ -99,11 +102,40 @@ public class RouteVerticle extends AutoRegisterVerticle {
     //=======================================自测例子=====================================
     //=======================================官方例子=====================================
     /*
-    与jdbcProvider基本等价
+    SHIRO---------与jdbcProvider基本等价
     JsonObject config = new JsonObject().put("properties_path", "classpath:test-auth.properties");
-    AuthProvider provider = ShiroAuth.create(vertx, ShiroAuthRealmType.PROPERTIES, config); */
+    AuthProvider provider = ShiroAuth.create(vertx, ShiroAuthRealmType.PROPERTIES, config);
+
+    OAUTH2-------
 
 
+    OAuth2ClientOptions options = new OAuth2ClientOptions().setClientID("client-mzp-1").setClientSecret("yangluzhekl").setSite("https://github.com/login");
+    OAuth2Auth oauth2 = OAuth2Auth.create(vertx, OAuth2FlowType.AUTH_CODE, options);
+
+    // when there is a need to access a protected resource or call a protected method,
+    // call the authZ url for a challenge
+
+    String authorization_uri = oauth2.authorizeURL(new JsonObject()
+        .put("redirect_uri", "http://localhost:8080/callback")
+        .put("scope", "notifications")
+        .put("state", "3(#0/!~"));
+    System.err.println(authorization_uri);
+    // when working with web application use the above string as a redirect url
+
+    // in this case GitHub will call you back in the callback uri one should now complete the handshake as:
+
+
+    String code = "xxxxxxxxxxxxxxxxxxxxxxxx"; // the code is provided as a url parameter by github callback call
+
+    oauth2.getToken(new JsonObject().put("code", code).put("redirect_uri", "http://localhost:8080/callback"), res -> {
+      if (res.failed()) {
+        // error, the code provided is not valid
+      } else {
+        // save the token and continue...
+      }
+    });
+
+    */
 
     AuthHandler authHandler = RedirectAuthHandler.create(jdbcAuth, "/login"); // <2>
     router.route("/").handler(authHandler);  // <3>
