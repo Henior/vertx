@@ -1,6 +1,8 @@
 package cn.henio;
 
 import com.hazelcast.config.Config;
+import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.spi.cluster.ClusterManager;
@@ -33,6 +35,11 @@ public class Application {
   private static Vertx vertx;
 
   /**
+   * HazelcastInstance 实例【one->>many】
+   */
+  private static HazelcastInstance hazelcastInstance;
+
+  /**
    * 获取Spring上下文
    * @return
    */
@@ -48,8 +55,16 @@ public class Application {
     return vertx;
   }
 
+  /**
+   * 获取HazelcastInstance
+   * @return
+   */
+  public static HazelcastInstance getHazelcastInstance() {
+    return hazelcastInstance;
+  }
+
   public static void main(String[] args) {
-    ClusterManager mgr = new HazelcastClusterManager(new Config());//创建ClusterManger对象
+    ClusterManager mgr = new HazelcastClusterManager(Application.hazelcastInstance = Hazelcast.newHazelcastInstance(new Config()));//创建ClusterManger对象
     VertxOptions options = new VertxOptions().setClusterManager(mgr).setFileResolverCachingEnabled(false);//设置到Vertx启动参数中
     Vertx.clusteredVertx(options, res -> {
       if (res.succeeded()) {

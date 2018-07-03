@@ -1,7 +1,6 @@
 package cn.henio;
 
 import io.vertx.core.Vertx;
-import io.vertx.core.VertxOptions;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.jdbc.JDBCAuth;
 import io.vertx.ext.jdbc.JDBCClient;
@@ -33,7 +32,6 @@ public class Configurations {
    */
   @Bean
   public Vertx vertx(){
-    //return Vertx.vertx(new VertxOptions().setFileResolverCachingEnabled(false));
     return Application.getVertx();
   }
 
@@ -51,6 +49,7 @@ public class Configurations {
     return CookieHandler.create();
   }
 
+  // CLUSTEREDSESSIONSTORE  有问题，目前不知道原因
   @Bean
   public SessionStore sessionStore(Vertx vertx){
     return LocalSessionStore.create(vertx);

@@ -78,8 +78,6 @@ public class BootstrapVerticle extends AutoRegisterVerticle {
     return super.deploymentOptions().setInstances(4);
   }*/
 
-  private AtomicBoolean mak = new AtomicBoolean(true);
-
   @Override
   public void start() throws Exception {
     CompositeFuture.all(startHttpServer(), startNetServer(), startMqttServer(), initDb()).setHandler(res -> {
