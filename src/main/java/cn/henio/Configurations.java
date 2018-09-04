@@ -16,6 +16,7 @@ import io.vertx.ext.web.sstore.SessionStore;
 import io.vertx.ext.web.templ.FreeMarkerTemplateEngine;
 import io.vertx.redis.RedisClient;
 import io.vertx.redis.RedisOptions;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
